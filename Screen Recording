@@ -1,0 +1,40 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jan 27 20:53:56 2026
+
+@author: aniru
+"""
+# -*- coding: utf-8 -*-
+import cv2 as c
+import pyautogui as p
+import numpy as np
+
+fps = 60
+fn = input("Enter video name (with .avi): ")
+
+# Screen resolution
+rs = p.size()
+size = (rs.width, rs.height)
+
+fourcc = c.VideoWriter_fourcc(*'XVID')
+output = c.VideoWriter(fn, fourcc, fps, size)
+
+c.namedWindow("Live Recording", c.WINDOW_NORMAL)
+c.resizeWindow("Live Recording", 600, 400)
+
+while True:
+    img = p.screenshot()
+    frame = np.array(img)
+
+    # PyAutoGUI gives RGB → OpenCV needs BGR
+    frame = c.cvtColor(frame, c.COLOR_RGB2BGR)
+
+    output.write(frame)
+    c.imshow("Live Recording", frame)
+
+    if c.waitKey(1) & 0xFF == ord('q'):
+        break
+
+output.release()
+c.destroyAllWindows()
+
