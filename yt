@@ -1,0 +1,45 @@
+import cv2
+import pafy
+url = "https://www.youtube.com/watch?v=wIAs97ynODo"
+data=pafy.new(url)
+data=data.getbest(preftype="avi")
+cap = cv2.VideoCapture(url)
+
+if not cap.isOpened():
+    print("Error: Cannot open IP camera")
+    exit()
+
+fourcc = cv2.VideoWriter_fourcc(*"XVID")
+
+
+out_width, out_height = 1400, 700
+
+output = cv2.VideoWriter(
+    "newvidyt.avi",     
+    fourcc,
+    30.0,
+    (out_width, out_height)
+)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print("Failed to grab frame")
+        break
+
+    
+    frame = cv2.resize(frame, (out_width, out_height))
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    cv2.imshow("Frame", frame)
+    cv2.imshow("Gray", gray)
+
+    output.write(frame)
+
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        break
+
+cap.release()
+output.release()
+cv2.destroyAllWindows()
